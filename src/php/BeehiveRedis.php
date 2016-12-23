@@ -73,7 +73,7 @@ class BeehiveRedis
 
         $this->masterWeight = isset($option['readWeight']) && $option['reads'] ? (int)$option['readWeight'] : 10;
 
-        $this->master = $this->connect($option['host'], $option['port'], $option['timeout']);
+        $this->master = $this->connect($option['host'], $option['port'], $option['timeout'], $option['persistent']);
         $option['auth'] and $this->master->auth($option['auth']);
 
         if ($option['reads']) {
@@ -82,7 +82,8 @@ class BeehiveRedis
             $host = isset($config['host']) ? $config['host'] : '127.0.0.1';
             $port = isset($config['port']) ? $config['port'] : 6379;
             $timeout = isset($config['timeout']) ? $config['timeout'] : 0;
-            $this->slave = $this->connect($host, $port, $timeout);
+            $persistent = isset($config['persistent']) ? (bool)$config['persistent'] : false;
+            $this->slave = $this->connect($host, $port, $timeout, $persistent);
 
             isset($config['auth']) and $this->slave->auth($config['auth']);
         }

@@ -69,7 +69,7 @@ class BeehiveRedis
         $option['timeout'] = isset($option['timeout']) ? $option['timeout'] : 0;
         $option['persistent'] = isset($option['persistent']) ? (bool)$option['persistent'] : false;
         $option['auth'] = isset($option['auth']) ? $option['auth'] : '';
-        $option['reads'] = isset($option['reads']) && is_array($option['reads'])? $option['reads'] : [];
+        $option['reads'] = isset($option['reads']) && is_array($option['reads']) ? $option['reads'] : [];
 
         $this->masterWeight = isset($option['readWeight']) && $option['reads'] ? (int)$option['readWeight'] : 10;
 
@@ -133,7 +133,9 @@ class BeehiveRedis
     {
         $param = array_shift($param);
         $key = array_shift($param);
-        if ($this->masterWeight < rand(1, 10) && $this->slave && in_array(strtolower($funcName), $this->readOnlyCommands)) {
+        if ($this->masterWeight < rand(1, 10) && $this->slave && in_array(strtolower($funcName),
+                $this->readOnlyCommands)
+        ) {
             return $key ? $this->slave->$funcName($key, ...$param) : $this->slave->$funcName();
         }
         return $key ? $this->master->$funcName($key, ...$param) : $this->master->$funcName();

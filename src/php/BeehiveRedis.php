@@ -67,6 +67,7 @@ class BeehiveRedis
         $option['host'] = isset($option['host']) ? $option['host'] : '127.0.0.1';
         $option['port'] = isset($option['port']) ? $option['port'] : 6379;
         $option['timeout'] = isset($option['timeout']) ? $option['timeout'] : 0;
+        $option['persistent'] = isset($option['persistent']) ? (bool)$option['persistent'] : false;
         $option['auth'] = isset($option['auth']) ? $option['auth'] : '';
         $option['reads'] = isset($option['reads']) && is_array($option['reads'])? $option['reads'] : [];
 
@@ -87,10 +88,21 @@ class BeehiveRedis
         }
     }
 
-    public function connect($host = '127.0.0.1', $port = 6379, $timeout = 0)
+    /**
+     * 连接
+     *
+     * @param string $host
+     * @param int $port
+     * @param float $timeout
+     * @param bool $persistent
+     *
+     * @return Redis
+     * @throws Exception
+     */
+    public function connect($host = '127.0.0.1', $port = 6379, $timeout = 0.0, $persistent = false)
     {
         $connect = new Redis();
-        $ret = $connect->connect($host, $port, $timeout);
+        $ret = $persistent ? $connect->pconnect($host, $port, $timeout) : $connect->connect($host, $port, $timeout);
         if (!$ret) {
             throw new Exception(sprintf('read redis connet fail at %s:%s', $host, $port));
         }
